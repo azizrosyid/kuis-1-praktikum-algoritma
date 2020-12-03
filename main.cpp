@@ -28,7 +28,7 @@ int main() {
     //  inisisasi data produk
     vector<Product> arrayProduct;  // vector untuk menampung struct Product
 
-    file.open("mfea.txt");
+    file.open("product.txt");
     file.close();
     if (file) {
         readFromFile(arrayProduct, file, product, productName, productStock);
@@ -236,7 +236,7 @@ void createLove(int &heightLove) {
 }
 
 void saveToFile(vector<Product> &arrayProduct, fstream &file) {
-    file.open("mfea.txt", ios::out);
+    file.open("product.txt", ios::out);
     for (int i = 0; i < arrayProduct.size(); i++) {
         if (!arrayProduct[i].name.empty()) {
             file << arrayProduct[i].name << "\n";
@@ -248,7 +248,7 @@ void saveToFile(vector<Product> &arrayProduct, fstream &file) {
 
 void readFromFile(vector<Product> &arrayProduct, fstream &file, Product &product, string &productName, int &productStock) {
     string strStock;
-    file.open("mfea.txt", ios::in);
+    file.open("product.txt", ios::in);
     for (int i = 0; i > -1; i += 2) {
         getline(file, productName);
         if (productName.empty()) {
