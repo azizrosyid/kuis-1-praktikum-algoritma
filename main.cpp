@@ -9,39 +9,50 @@ struct Product {
     string name;
     int stock;
 };
+
+// declaration function
 bool is_primeNumber(int &);
-void showMenu(vector<Product> &);
-void addToArray(vector<Product> &, Product &, string &, int &);
-void addProduct(vector<Product> &, Product &, int &);
-void updateStockProduct(vector<Product> &, string);
+void showMenu();
+void addToArray();
+void addProduct(int &);
+void updateStockProduct(string);
 void showPrimeNumber(int &);
 void createLove(int &);
-void saveToFile(vector<Product> &, fstream &);
-void readFromFile(vector<Product> &, fstream &, Product &, string &, int &);
+void saveToFile();
+void readFromFile();
+
+//  inisisasi data produk
+// vector yang didalamnya berisi struct product
+vector<Product> arrayProduct;
+
+// Insisiasi stuct product
+Product product;
+
+// inisiasi fstream
+fstream file;
+
+// inisiasi variable global
+string productName;
+int productStock;
 
 int main() {
-    string productName, temp, strStock;
-    int choice, productStock, height_love, total_loop;
-    Product product;
-    fstream file;
-
-    //  inisisasi data produk
-    vector<Product> arrayProduct;  // vector untuk menampung struct Product
+    string temp, strStock;
+    int choice, height_love, total_loop;
 
     file.open("product.txt");
     file.close();
-    if (file) {
-        readFromFile(arrayProduct, file, product, productName, productStock);
+    if (file) {          // jika file sudah ada maka
+        readFromFile();  // read data from file product.txt
     } else {
         // data 1
         productName = "Sport Drink";
         productStock = 60;
-        addToArray(arrayProduct, product, productName, productStock);  // add data 1 to vector
+        addToArray();  // add data 1 to vector
         // data 2
         productName = "Roti Q";
         productStock = 40;
-        addToArray(arrayProduct, product, productName, productStock);
-        saveToFile(arrayProduct, file);
+        addToArray();
+        saveToFile();
     }
 
     do {
@@ -60,7 +71,7 @@ int main() {
         if (choice == 1) {
             cout << "///// Daftar Menu /////" << endl
                  << endl;
-            showMenu(arrayProduct);
+            showMenu();  // menampilkan menu yang ada
             cout << endl;
             cout << "///// ============ /////" << endl;
         } else if (choice == 2) {
@@ -70,12 +81,12 @@ int main() {
             cin >> choice;
             cout << endl;
             if (choice == 1) {
-                updateStockProduct(arrayProduct, "add");
+                updateStockProduct("add");
             } else if (choice == 2) {
-                addProduct(arrayProduct, product, total_loop);
+                addProduct(total_loop);
             }
         } else if (choice == 3) {
-            updateStockProduct(arrayProduct, "minus");
+            updateStockProduct("minus");
         } else if (choice == 4) {
             cout << "Masukkan banyaknya nilai : ";
             cin >> total_loop;
@@ -96,25 +107,25 @@ int main() {
     return 0;
 }
 
-void showMenu(vector<Product> &arrayProduct) {
-    for (int i = 0; i < arrayProduct.size(); i++) {
-        if (!arrayProduct[i].name.empty()) {
-            cout << i + 1 << ". " << arrayProduct[i].name << " : " << arrayProduct[i].stock << endl;
+// fungsi untuk melooping vector kemudian menampilkan menu
+void showMenu() {
+    for (int i = 0; i < arrayProduct.size(); i++) {                                                   //looping vector
+        if (!arrayProduct[i].name.empty()) {                                                          // jika tidak empty
+            cout << i + 1 << ". " << arrayProduct[i].name << " : " << arrayProduct[i].stock << endl;  // menampilkan element vector
         }
     }
     cin.get();
 }
 
-void addToArray(vector<Product> &arrayProduct, Product &product, string &productName, int &productStock) {
-    product.name = productName;
+// fungsi untuk menambahkan struct ke vector
+void addToArray() {
+    product.name = productName;  // input productname to struct
     product.stock = productStock;
-    arrayProduct.push_back(product);
+    arrayProduct.push_back(product);  // menambahkan struct ke vector
 }
 
-void addProduct(vector<Product> &arrayProduct, Product &product, int &total_loop) {
-    fstream file;
-    string productName;
-    int productStock;
+// fungsi untuk menambahkan product baru
+void addProduct(int &total_loop) {
     cout << "Jumlah Data : ";
     cin >> total_loop;
     for (int i = 0; i < total_loop; i++) {
@@ -123,39 +134,39 @@ void addProduct(vector<Product> &arrayProduct, Product &product, int &total_loop
         getline(cin, productName);
         cout << "Banyak : ";
         cin >> productStock;
-        addToArray(arrayProduct, product, productName, productStock);
-        saveToFile(arrayProduct, file);
+        addToArray();
+        saveToFile();
     }
     cin.ignore();
 }
 
-void updateStockProduct(vector<Product> &arrayProduct, string typeMode) {
-    fstream file;
-    string productName, stringTypeMode;
-    int productStock, amountStock, indexArray;
+// fungsi untuk update stok
+void updateStockProduct(string typeMode) {
+    string productNameVector, stringTypeMode;
+    int productStockVector, amountStock, indexArray;
     if (typeMode == "add") {
         stringTypeMode = "ditambahkan";
     } else if (typeMode == "minus") {
         stringTypeMode = "dikurangi";
     }
-    showMenu(arrayProduct);
+    showMenu();
     cout << "Pilih Menu yang ingin " << stringTypeMode << " : ";
     cin >> indexArray;
     cout << endl;
     indexArray -= 1;
     if (indexArray >= 0 && indexArray < arrayProduct.size()) {
-        productName = arrayProduct[indexArray].name;
-        productStock = arrayProduct[indexArray].stock;
-        if (!productName.empty()) {
-            cout << "Anda memilih " << productName << endl;
-            cout << "Jumlah " << productName << " saat ini : " << productStock << endl;
+        productNameVector = arrayProduct[indexArray].name;
+        productStockVector = arrayProduct[indexArray].stock;
+        if (!productNameVector.empty()) {
+            cout << "Anda memilih " << productNameVector << endl;
+            cout << "Jumlah " << productNameVector << " saat ini : " << productStockVector << endl;
             cout << "Masukkan Jumlah : ";
-            cin >> amountStock;
-            amountStock = typeMode == "minus" ? amountStock * -1 : amountStock;
-            productStock += amountStock;
-            arrayProduct[indexArray].stock = productStock;
-            cout << "Stok berhasil " << stringTypeMode << " menjadi : " << productStock << endl;
-            saveToFile(arrayProduct, file);
+            cin >> amountStock;                                                  // input jumlah stock yang akan ditambahkan
+            amountStock = typeMode == "minus" ? amountStock * -1 : amountStock;  // jika mode minus maka stok yang akan ditambah dikali -1
+            productStockVector += amountStock;
+            arrayProduct[indexArray].stock = productStockVector;  // update nilai di vector
+            cout << "Stok berhasil " << stringTypeMode << " menjadi : " << productStockVector << endl;
+            saveToFile();  //update data di file
         } else {
             cout << "Gagal menambahkan Stok." << endl;
         }
@@ -235,10 +246,10 @@ void createLove(int &heightLove) {
     cin.ignore();
 }
 
-void saveToFile(vector<Product> &arrayProduct, fstream &file) {
-    file.open("product.txt", ios::out);
+void saveToFile() {
+    file.open("product.txt", ios::out);  //open file
     for (int i = 0; i < arrayProduct.size(); i++) {
-        if (!arrayProduct[i].name.empty()) {
+        if (!arrayProduct[i].name.empty()) {  // jika product name tidak kosong maka save to file
             file << arrayProduct[i].name << "\n";
             file << arrayProduct[i].stock << "\n";
         }
@@ -246,17 +257,17 @@ void saveToFile(vector<Product> &arrayProduct, fstream &file) {
     file.close();
 }
 
-void readFromFile(vector<Product> &arrayProduct, fstream &file, Product &product, string &productName, int &productStock) {
+void readFromFile() {
     string strStock;
-    file.open("product.txt", ios::in);
-    for (int i = 0; i > -1; i += 2) {
-        getline(file, productName);
-        if (productName.empty()) {
-            break;
+    file.open("product.txt", ios::in);  // open file
+    for (int i = 0; i > -1; i += 2) {   // infinite loop akses isi file
+        getline(file, productName);     // mendapatkan productname
+        if (productName.empty()) {      // jika product name empty maka
+            break;                      //break the loop
         }
-        getline(file, strStock);
-        stringstream intStock(strStock);
-        intStock >> productStock;
-        addToArray(arrayProduct, product, productName, productStock);
+        getline(file, strStock);          // mendapatkan stock berbentuk str
+        stringstream intStock(strStock);  // inisiasi stringstream
+        intStock >> productStock;         // convert str ke int
+        addToArray();
     }
 }
